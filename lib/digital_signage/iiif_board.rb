@@ -22,9 +22,7 @@ module DigitalSignage
         iiif_qrcode: { url: catalog_url },
         iiif_url: { text: catalog_url },
         iiif_image: {
-          items: [
-            Array(doc['large_image_url_ssm']).map { |x| { url:  x } }
-          ]
+          items: Array(doc['large_image_url_ssm']).map { |x| { url:  x } }
         },
         iiif_repository: {
           text: Array(doc['repository_ssim']).first
