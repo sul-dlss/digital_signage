@@ -4,30 +4,28 @@ require 'time'
 
 module DigitalSignage
   class IiifBoard < Board
-    def self.call
-      output = Faraday.get("https://sul-solr.stanford.edu/solr/exhibits_prod/select?rows=100&wt=json&indent=on&fl=title_full_display,large_image_url_ssm,full_image_url_ssm,druid,spotlight_exhibit_slug*,repository_ssim&fq=content_metadata_type_ssim:image&sort=timestamp%20desc").body
+    def self.call(iiif_manifest:)
+      telemetry(
+        extract(iiif_manifest)
+      )
+    end
 
-      data = JSON.parse(output)
-      doc = data['response']['docs'].sample
-      exhibit_url="https://exhibits.stanford.edu/#{doc.select { |k, v| Array(v).first == true && k =~ /spotlight_exhibit_slug/ }.keys.first.sub('spotlight_exhibit_slug_', '').sub('_bsi', '')}"
-      catalog_url="#{exhibit_url}/catalog/#{doc['druid']}"
-      exhibit_html = Nokogiri::HTML.parse(Faraday.get(exhibit_url).body)
-      exhibit_title = exhibit_html.xpath('//meta[@property="og:title"]').first['content']
+    def self.extract(iiif_manifest)
+      response = Faraday.get(iiif_manifest)
+      data = JSON.parse(response.body)
 
-      telemetry({
-        iiif_title: {
-          text: doc['title_full_display'].slice(0,255)
-        },
-        iiif_exhibit_title: { text: exhibit_title },
-        iiif_qrcode: { url: catalog_url },
-        iiif_url: { text: catalog_url },
+      {
+        iiif_title: { text: data['label'] },
+        iiif_description: { text: data['description'] },
+        iiif_attribution: { text: data['attribution'] },
+        iiif_logo: { url: data['logo']['@id'] },
         iiif_image: {
-          items: Array(doc['large_image_url_ssm']).map { |x| { url:  x } }
+          items: data['sequences'].map { |seq| seq['canvases'].map { |can| can['images'].map { |img| img['resource']['service']['@id'] }.first } }.flatten.map { |id| { url: "#{id}/full/!2000,/0/default.jpg" } }
         },
-        iiif_repository: {
-          text: Array(doc['repository_ssim']).first
+        iiif_image_label: {
+          items: data['sequences'].map { |seq| seq['canvases'].map { |can| can['label'] } }.flatten.map { |label| { text: "#{label}" } }
         }
-      })
+      }
     end
   end
 end

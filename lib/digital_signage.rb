@@ -7,7 +7,13 @@ require "digital_signage/iiif_board"
 
 module DigitalSignage
   def self.call
-    boards.each(&:call)
+    boards.each do |board|
+      begin
+        board.call
+      rescue => e
+        puts e
+      end
+    end
   end
 
   def self.boards
