@@ -9,11 +9,7 @@ require "digital_signage/exhibits_board"
 module DigitalSignage
   def self.call
     boards.each do |board|
-      begin
-        board.call
-      rescue => e
-        puts e
-      end
+      board.call
     end
   end
 
