@@ -20,7 +20,7 @@ module DigitalSignage
         iiif_attribution: { text: data['attribution'] },
         iiif_logo: { url: data['logo']['@id'] },
         iiif_image: {
-          items: data['sequences'].map { |seq| seq['canvases'].map { |can| can['images'].map { |img| img['resource']['service']['@id'] }.first } }.flatten.map { |id| { url: "#{id}/full/!2000,/0/default.jpg" } }
+          items: data['sequences'].map { |seq| seq['canvases'].map { |can| can['images'].map { |img| img['resource']['service']['@id'] }.first } }.flatten.map { |id| { url: "#{id}/full/!2000,950/0/default.jpg" } }
         },
         iiif_image_label: {
           items: data['sequences'].map { |seq| seq['canvases'].map { |can| can['label'] } }.flatten.map { |label| { text: "#{label}" } }
