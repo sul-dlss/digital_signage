@@ -13,7 +13,7 @@ module DigitalSignage
       exhibit_url="https://exhibits.stanford.edu/#{exhibit_slug}"
       catalog_url="#{exhibit_url}/catalog/#{doc['druid']}"
       exhibit_html = Nokogiri::HTML.parse(Faraday.get(exhibit_url).body)
-      exhibit_title = exhibit_html.xpath('//meta[@property="og:title"]').first['content']
+      exhibit_title = exhibit_html.xpath('//meta[@property="og:title"]').first['content'] rescue nil
 
       iiif_manifest = doc['iiif_manifest_url_ssi']
       hash = extract(iiif_manifest)
