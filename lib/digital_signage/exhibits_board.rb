@@ -5,7 +5,7 @@ require 'time'
 module DigitalSignage
   class ExhibitsBoard < IiifBoard
     def self.call
-      output = Faraday.get("https://sul-solr.stanford.edu/solr/exhibits_prod/select?rows=1&wt=json&indent=on&fl=title_full_display,iiif_manifest_url_ssi,druid,spotlight_exhibit_slug*,repository_ssim&fq=content_metadata_type_ssim:image&fq=collection:#{random_collection}&sort=random#{rand(10000)}%20desc").body
+      output = Faraday.get("https://sul-solr.stanford.edu/solr/exhibits-prod/select?rows=1&wt=json&indent=on&fl=title_full_display,iiif_manifest_url_ssi,druid,spotlight_exhibit_slug*,repository_ssim&fq=content_metadata_type_ssim:image&fq=collection:#{random_collection}&sort=random#{rand(10000)}%20desc").body
 
       data = JSON.parse(output)
       doc = data['response']['docs'].first
@@ -31,7 +31,7 @@ module DigitalSignage
     end
 
     def self.random_collection
-      output = Faraday.get("https://sul-solr.stanford.edu/solr/exhibits_prod/select?rows=0&wt=json&json.nl=map&fq=content_metadata_type_ssim:image&facet=true&facet.field=collection&facet.limit=10000").body
+      output = Faraday.get("https://sul-solr.stanford.edu/solr/exhibits-prod/select?rows=0&wt=json&json.nl=map&fq=content_metadata_type_ssim:image&facet=true&facet.field=collection&facet.limit=10000").body
 
       data = JSON.parse(output)
       data['facet_counts']['facet_fields']['collection'].keys.sample
